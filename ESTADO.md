@@ -45,22 +45,6 @@ Pendiente
   - **Resultados:** `scratch/resultados-giro-aire.md` actualizado con H2
 
 ✓ **Tareas 5 y 6:** Ventaja al lanzar (vuelo) - COMPLETO Y CORREGIDO
-
-### Avisos para A:
-
-🔔 **`giro_por_cuadro()` está REAL y VERIFICADO**
-  - Ubicación: `backend/calculos/giros.py`
-  - Firma: `giro_por_cuadro(cuadros)`
-  - Retorna: DataFrame con giro_grados, girando, valido (columnas añadidas)
-  - Vectorizado: procesa todo el tracking de una vez
-  - Verificación: 4 casos sintéticos en `scratch/verifica_giro_aire.py`
-
-🔔 **`vuelo.sigue_libre_por_jugada()` está REAL**
-  - Ubicación: `backend/calculos/vuelo.py`
-  - Firma: `sigue_libre_por_jugada(cuadros, plays, players, pff)`
-  - Retorna: DataFrame con gameId, playId, valido, sigue_libre
-  - Significado: sigue_libre = objetivo a ≥3 yd en pass_forward
-  - Cobertura semana 1: 778 jugadas (74.0% del total de pases)
   - **Archivos creados:**
     - `backend/calculos/vuelo.py` - Módulo de ventaja al lanzar (constantes inline)
     - `backend/calculos/__init__.py` - Inicializador
@@ -95,6 +79,13 @@ Pendiente
     - BOOTSTRAP_REPS = 1000, SEMILLA = 42
 
 ### Avisos para A:
+
+🔔 **`giro_por_cuadro()` está REAL y VERIFICADO**
+  - Ubicación: `backend/calculos/giros.py`
+  - Firma: `giro_por_cuadro(cuadros)`
+  - Retorna: DataFrame con giro_grados, girando, valido (columnas añadidas)
+  - Vectorizado: procesa todo el tracking de una vez
+  - Verificación: 4 casos sintéticos en `scratch/verifica_giro_aire.py`
 
 🔔 **`vuelo.sigue_libre_por_jugada()` está REAL**
   - Ubicación: `backend/calculos/vuelo.py`
