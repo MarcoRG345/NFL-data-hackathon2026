@@ -1,0 +1,96 @@
+[carga] leyendo games, plays, players, pffScoutingData...
+[carga] semanas [1]: 16 partidos
+[carga] semana 1 (1/16 partidos)
+[carga] jugadas válidas: 1,100; cuadros: 686,814; excluidas: {'no_play': 72, 'sin_ball_snap': 3, 'sin_registro_plays': 0}
+[carga] listo en 3.1 s
+[base] jugadas: 1,100 (0.0 s)
+[base] sep_cuadros: 180,438 (0.5 s)
+[base] presion: 1,100 (0.6 s)
+[base] objetivo: 965 (0.8 s)
+
+=== TIEMPOS (semanas [1]) ===
+carga 3.1 s | tablas base 0.8 s | total 3.9 s
+pico RSS: 211 MB
+
+=== TABLAS ===
+cuadros      filas   686,814  memoria    33.0 MB
+eventos      filas     1,100  memoria     0.1 MB
+jugadas      filas     1,100  memoria     0.3 MB
+sep_cuadros  filas   180,438  memoria     6.7 MB
+presion      filas     1,100  memoria     0.0 MB
+objetivo     filas       965  memoria     0.0 MB
+
+=== V1 CONTEOS ===
+jugadas válidas: 1100 | decisivas: 354 | pocas_yardas: 74 | reloj_final: 170 | marcador_cerrado: 117 | normal: 743
+con pase C/I: 965 | con lanzamiento: 993
+passResult: {'C': 630, 'I': 335, 'S': 68, 'R': 51, 'IN': 16}
+con presión (total): 317 | por distancia: 315 | por sack: 2 | ninguna: 783
+con objetivo válido: 929 de 965
+claves únicas jugadas/presion/objetivo: 0 0 0 duplicados
+nulos en jugadas (down, reloj_seg, linea_golpeo, t_fin): {'down': 0, 'reloj_seg': 0, 'linea_golpeo': 0, 't_fin': 0}
+t_fin: min 0.9 mediana 2.7 max 9.8
+
+=== V2 pass_arrived ===
+pass_arrived no existe en estos datos (nota de pregunta.md): se recorta al ÚLTIMO cuadro y se mide en pass_forward.
+% jugadas con pass_forward/autoevent_passforward: 90.3% | % de las C/I con lanzamiento: 100.0%
+segundos entre lanzamiento y último cuadro (mediana): 0.5
+
+=== V3 SEPARACIÓN EN pass_forward (objetivo y cualquier receptor) ===
+sep_cuadros: min 0.07 max 34.66 nulos 0
+negativos: 0 | > 40: 0
+todos los receptores en pass_forward  (n=4626): p10 0.94  mediana 2.93  p90 7.80
+receptor objetivo en pass_forward     (n=929): p10 1.16  mediana 3.62  p90 8.58
+receptores por jugada (mediana): 5.0
+separación a t=0 (snap) mediana: 6.02
+
+=== V4 PRESIÓN vs PFF (pff_hurry/hit/sack de los Pass Rush) ===
+distancia o sack : PFF presión 407 | mía 317 | ambos 262 | detecta 64.4% de PFF | 82.6% de las mías son PFF | acuerdo global (ambos o ninguno) 81.8%
+solo distancia   : PFF presión 407 | mía 315 | ambos 262 | detecta 64.4% de PFF | 83.2% de las mías son PFF | acuerdo global (ambos o ninguno) 82.0%
+radio 1.5: con presión 16.9% (por distancia 16.5%)
+radio 3.0: con presión 68.3% (por distancia 68.2%)
+t_presion (por distancia): p10 2.10 mediana 2.60 p90 3.40
+% presión: por distancia 28.6 | por sack 0.2 | sin presión 71.2
+
+=== V5 OBJETIVO ===
+método: texto 96.1% | ninguno 3.7% | balon 0.2% (n=965)
+distancia al balón del objetivo por texto (mediana): 7.84 yd
+20 al azar con método texto:
+  OK  Marquise Brown            <- (1:25) (Shotgun) L.Jackson pass short middle to M.Brown to BAL 31 for 4 yards (N.Kwiatkoski).
+  OK  A.J. Green                <- (6:44) (Shotgun) K.Murray pass incomplete short right to A.Green.
+  OK  D.J. Chark                <- (:15) (Shotgun) T.Lawrence pass incomplete deep left to D.Chark.
+  OK  Michael Gallup            <- (2:45) (Shotgun) D.Prescott pass short right to M.Gallup ran ob at TB 29 for 8 yards.
+  OK  JuJu Smith-Schuster       <- (1:16) (Shotgun) B.Roethlisberger pass short left to J.Smith-Schuster to PIT 33 for 12 yards (M
+  OK  Rob Gronkowski            <- (10:54) T.Brady pass short right to R.Gronkowski to TB 44 for 7 yards (A.Brown; J.Lewis).
+  OK  Kendrick Bourne           <- (2:59) (Shotgun) M.Jones pass incomplete short left to K.Bourne [S.Eguavoen].
+  OK  Jack Doyle                <- (11:34) (Shotgun) C.Wentz pass short middle to J.Doyle to SEA 26 for 7 yards (T.Flowers).
+  OK  Ian Thomas                <- (11:03) S.Darnold pass short right to I.Thomas pushed ob at CAR 37 for 17 yards (M.Maye).
+  OK  Zach Ertz                 <- (1:08) (Shotgun) J.Hurts pass short right to Z.Ertz pushed ob at ATL 45 for 6 yards (D.Harmon).
+  OK  Kenny Golladay            <- (3:01) (Shotgun) D.Jones pass incomplete deep left to K.Golladay. Penalty on NYG-W.Hernandez, I
+  OK  Salvon Ahmed              <- (7:41) (Shotgun) T.Tagovailoa pass short right to S.Ahmed pushed ob at MIA 26 for 6 yards (J.Be
+  OK  Dalton Schultz            <- (4:49) (Shotgun) D.Prescott pass short right to D.Schultz to TB 42 for 10 yards (J.Pierre-Paul)
+  OK  Jared Cook                <- (14:15) J.Herbert pass short middle to J.Cook to WAS 40 for 19 yards (B.McCain; C.Holcomb).
+  OK  Josh Jacobs               <- (13:25) (Shotgun) D.Carr pass short middle to J.Jacobs to LV 41 for 6 yards (M.Harrison).
+  OK  Devin Singletary          <- (4:06) (Shotgun) J.Allen pass short left to D.Singletary to BUF 27 for 5 yards (C.Sutton).
+  OK  Tee Higgins               <- (13:08) (Shotgun) J.Burrow pass short right to T.Higgins pushed ob at MIN 34 for 28 yards (N.Vi
+  OK  Chris Godwin              <- (12:06) (Shotgun) T.Brady pass incomplete deep right to C.Godwin.
+  OK  Keenan Allen              <- (12:29) J.Herbert pass short left to K.Allen to 50 for 16 yards (K.Curl).
+  OK  Danny Amendola            <- (10:17) (Shotgun) Ty.Taylor pass short right to D.Amendola to JAX 43 for 7 yards (T.Campbell).
+coincidencia en la muestra: 20/20 = 100%
+
+Muestra de 5 filas de objetivo vs playDescription (aleatoria, mezcla de métodos):
+  metodo=texto aprox=False valido=True objetivo=Austin Hooper dist_balon=6.5569562911987305 sep_lanza=1.0600019693374634 sep_antes=1.5924873352050781
+    -> (9:18) (Shotgun) B.Mayfield pass short left to A.Hooper to KC 10 for 5 yards (M.Hughes).
+  metodo=texto aprox=False valido=True objetivo=Clyde Edwards-Helaire dist_balon=4.370412826538086 sep_lanza=8.753114700317383 sep_antes=8.397887229919434
+    -> (5:08) P.Mahomes pass short left to C.Edwards-Helaire to CLE 42 for 11 yards (Ma.Wilson; R.Harrison). Penalty on CLE-R.Harrison, Disqualification, offsetting. Penalty on KC, Unsportsmanlike Conduct, offsetting.
+  metodo=texto aprox=False valido=True objetivo=Keenan Allen dist_balon=11.416631698608398 sep_lanza=5.42595100402832 sep_antes=2.4382336139678955
+    -> (5:29) (Shotgun) J.Herbert pass short middle to K.Allen to LAC 29 for 17 yards (B.McCain).
+  metodo=texto aprox=False valido=True objetivo=Mike Davis dist_balon=4.384393215179443 sep_lanza=9.840835571289062 sep_antes=11.063525199890137
+    -> (15:00) (Shotgun) M.Ryan pass incomplete short left to M.Davis.
+  metodo=texto aprox=False valido=True objetivo=Zach Pascal dist_balon=6.878845691680908 sep_lanza=11.200448989868164 sep_antes=9.366114616394043
+    -> (13:10) C.Wentz pass short left to Z.Pascal pushed ob at IND 47 for 6 yards (J.Brooks).
+
+% de 'texto' cuyo objetivo está a <=3 yd del balón en el último cuadro: 16.0%
+sep_lanza nulos entre válidos: 0 de 929
+tendencia: p10 -1.44 mediana -0.04 p90 1.58
+
+pico RSS final: 211 MB

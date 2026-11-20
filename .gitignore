@@ -1,0 +1,25 @@
+.venv/
+.hackathon/.tools/
+.hackathon/.cache/
+.hackathon/.bootstrap/
+.hackathon/setup.log
+node_modules/
+dist/
+__pycache__/
+
+# Llaves y credenciales: nunca al repositorio
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.aws/
+
+data/
+scratch/**/*.csv
+scratch/**/*.parquet
+setup-log.txt
+.env
+.venv/
+node_modules/
+dashboard/dist/

@@ -1,0 +1,70 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "7. Contrato del frontend": [
+      {
+        "executionId": "46f3e593-1df7-4e5a-979f-58c66128c654",
+        "chatSessionId": "sess_207fd7e6-c3f3-4553-a0a0-ba930bcd863f",
+        "timestamp": 1795195355732
+      }
+    ],
+    "4. Esquemas y routers con datos de mentira": [
+      {
+        "executionId": "46f3e593-1df7-4e5a-979f-58c66128c654",
+        "chatSessionId": "sess_207fd7e6-c3f3-4553-a0a0-ba930bcd863f",
+        "timestamp": 1795195361089
+      },
+      {
+        "executionId": "46f3e593-1df7-4e5a-979f-58c66128c654",
+        "chatSessionId": "sess_207fd7e6-c3f3-4553-a0a0-ba930bcd863f",
+        "timestamp": 1795195630997
+      }
+    ],
+    "5. Verificación del backend": [
+      {
+        "executionId": "46f3e593-1df7-4e5a-979f-58c66128c654",
+        "chatSessionId": "sess_207fd7e6-c3f3-4553-a0a0-ba930bcd863f",
+        "timestamp": 1795195635190
+      },
+      {
+        "executionId": "46f3e593-1df7-4e5a-979f-58c66128c654",
+        "chatSessionId": "sess_207fd7e6-c3f3-4553-a0a0-ba930bcd863f",
+        "timestamp": 1795195739228
+      }
+    ],
+    "2. Extender la carga de datos": [
+      {
+        "executionId": "b91e0cdb-46db-4f8f-97aa-2361dabea7c4",
+        "chatSessionId": "sess_207fd7e6-c3f3-4553-a0a0-ba930bcd863f",
+        "timestamp": 1795195856281
+      },
+      {
+        "executionId": "b91e0cdb-46db-4f8f-97aa-2361dabea7c4",
+        "chatSessionId": "sess_207fd7e6-c3f3-4553-a0a0-ba930bcd863f",
+        "timestamp": 1795196075273
+      }
+    ],
+    "3. Tablas base": [
+      {
+        "executionId": "b91e0cdb-46db-4f8f-97aa-2361dabea7c4",
+        "chatSessionId": "sess_207fd7e6-c3f3-4553-a0a0-ba930bcd863f",
+        "timestamp": 1795196075953
+      },
+      {
+        "executionId": "b91e0cdb-46db-4f8f-97aa-2361dabea7c4",
+        "chatSessionId": "sess_207fd7e6-c3f3-4553-a0a0-ba930bcd863f",
+        "timestamp": 1795196396228
+      },
+      {
+        "executionId": "bda76450-f806-48f7-90e4-187096c5c9df",
+        "chatSessionId": "sess_207fd7e6-c3f3-4553-a0a0-ba930bcd863f",
+        "timestamp": 1795196582404
+      },
+      {
+        "executionId": "bda76450-f806-48f7-90e4-187096c5c9df",
+        "chatSessionId": "sess_207fd7e6-c3f3-4553-a0a0-ba930bcd863f",
+        "timestamp": 1795196705368
+      }
+    ]
+  }
+}
