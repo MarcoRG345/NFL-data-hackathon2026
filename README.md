@@ -1,8 +1,98 @@
-# Kit Two Clocks · la carrera de los dos relojes
+# La carrera de los dos relojes · Kit Two Clocks
+
+## Pregunta
+
+¿Existen dinámicas de dos velocidades en las jugadas de la NFL, donde el receptor corre contra dos relojes diferentes: el tiempo hasta el snap y el tiempo en el aire de la pelota?
+
+Específicamente: ¿Pueden los equipos predecir si un receptor llegará a tiempo para atrapar un balón basándose en su velocidad pre-snap y el tiempo de vuelo estimado? ¿Qué patrones emergen cuando se compara la eficiencia de carrera contra cada reloj?
+
+## Datos
+
+- **Fuente**: Tracking data de la NFL (2021-2023)
+- **Alcance**: Jugadas de pase donde el receptor está en movimiento antes del snap
+- **Variables clave**:
+  - Velocidad y aceleración pre-snap del receptor
+  - Tiempo hasta el snap (reloj 1)
+  - Tiempo de vuelo del balón (reloj 2)
+  - Posición y orientación frame por frame
+  - Resultado de la jugada (completo/incompleto, yardas ganadas)
+
+## Método
+
+1. **Reconstrucción de trayectorias**: Identificar el inicio del movimiento, calcular velocidad y distancia recorrida pre-snap
+2. **Cálculo de relojes**: 
+   - Reloj 1: tiempo disponible hasta el snap
+   - Reloj 2: tiempo de vuelo del balón desde release hasta punto de recepción proyectado
+3. **Métricas de eficiencia**: 
+   - Aprovechamiento del reloj 1 (% de ventaja tomada)
+   - Sincronización con reloj 2 (margen de llegada a punto de recepción)
+4. **Análisis comparativo**: Bootstrap y estadística de intervalos para patrones por jugador, equipo y situación de juego
+5. **Visualización dual**: Dashboard con replay sincronizado de ambos relojes y mapas de calor de eficiencia
+
+## Qué se encontró y cómo se sabe
+
+*(Esta sección se completará con los resultados del análisis. Ejemplos de hallazgos esperados:)*
+
+- Receptores élite toman ventaja de X segundos pre-snap en promedio (intervalo bootstrap 95%: [a, b])
+- El 73% de pases completos muestran sincronización óptima con margen de ≤0.3 segundos
+- Patrones de giro y aceleración post-snap predicen completions con precisión de X%
+- Mapas de calor revelan zonas de eficiencia diferencial por tipo de ruta
+
+**Evidencia**: 
+- Gráficas de síntesis de cadenas de carrera
+- Intervalos de confianza bootstrap (n≥30 por jugador)
+- Replays visuales sincronizados con métricas en tiempo real
+- Mapas de calor de giros y eficiencia espacial
+
+## Cómo se ejecuta
+
+### Instalación
+
+```bash
+# Backend (Python)
+cd backend
+python -m venv .venv
+.venv\Scripts\Activate.ps1  # Windows PowerShell
+pip install -r requirements.txt
+
+# Frontend (TypeScript + React)
+cd dashboard
+npm install
+```
+
+### Ejecución en desarrollo
+
+```bash
+# Terminal 1: Backend API
+cd backend
+.venv\Scripts\Activate.ps1
+python src/main.py
+
+# Terminal 2: Dashboard
+cd dashboard
+npm run dev
+```
+
+El dashboard estará disponible en `http://localhost:5173` y consumirá la API en `http://localhost:8000`.
+
+### Verificación
+
+```bash
+# Verificar que los datos se cargan correctamente
+python backend/src/main.py --check
+
+# Ejecutar tests (cuando estén implementados)
+cd backend && pytest
+cd dashboard && npm test
+```
+
+---
+
+## Contenido del Kit
 
 Todo lo que Kiro y el equipo necesitan para construir el backend y el dashboard con el stack del hackathon, en paralelo entre dos personas.
 
-## Qué hay y dónde va
+### Qué hay y dónde va
 
 Copia cada archivo a la misma ruta dentro de `hackathon-unam/`.
 

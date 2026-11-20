@@ -1,3 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Animación de aparición */
+@keyframes aparece {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.aparece {
+  animation: aparece 0.45s ease-out;
+}
+
+/* Animación de cinta */
+@keyframes cinta {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.cinta {
+  animation: cinta 30s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aparece,
+  .cinta {
+    animation: none;
+  }
+}
