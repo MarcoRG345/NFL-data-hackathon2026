@@ -20,7 +20,47 @@ Pendiente
   - Ventana corregida: dir(t+0.25s) - dir(t-0.25s)
   - % brusco: 6.9% (coherente con prueba de vida: 4.3%)
 
+✓ **Tarea 2:** Giro por cuadro (función real) - COMPLETO
+  - **Archivo:** `backend/calculos/giros.py`
+  - **Función:** `giro_por_cuadro(cuadros)` - Vectorizada
+  - **Verificación:** `scratch/verifica_giro_aire.py` - 4 casos sintéticos ✓
+  - **Aviso a A:** Función vectorizada disponible para uso en síntesis
+
+✓ **Tarea 3:** Giro principal por ruta (función real) - COMPLETO
+  - **Archivo:** `backend/calculos/giros.py`
+  - **Función:** `construir_giros(cuadros, plays, players, pff)`
+  - **Implementación:**
+    - Giro principal = mayor |Δdir| válido entre 0.5s post-snap y pass_forward
+    - Rutas sin giro: sep_ganada medida desde tiempo mediano de giros (igualdad de condiciones)
+    - Tipos: sin_giro (<30°), suave (30-60°), brusco (≥60°)
+  - **Prueba:** `scratch/prueba_giros_modulo.py` - 4433 rutas analizadas
+
+✓ **Tarea 4:** Resumen de giros e H2 - COMPLETO
+  - **Función:** `giros.resumen(filtro)` - Por tipo con IC 90%
+  - **H2 NO confirmado:** Giros NO diferencian rendimiento práctico
+    - Brusco vs Sin giro: +0.35 yd (IC se solapan)
+    - % libre similar: 46.9% vs 49.9% (diferencia no significativa)
+    - Todos los tipos pierden separación al acercarse al lanzamiento
+  - **Insight:** La ventaja al lanzar (H3) es más predictiva que los giros (H2)
+  - **Resultados:** `scratch/resultados-giro-aire.md` actualizado con H2
+
 ✓ **Tareas 5 y 6:** Ventaja al lanzar (vuelo) - COMPLETO Y CORREGIDO
+
+### Avisos para A:
+
+🔔 **`giro_por_cuadro()` está REAL y VERIFICADO**
+  - Ubicación: `backend/calculos/giros.py`
+  - Firma: `giro_por_cuadro(cuadros)`
+  - Retorna: DataFrame con giro_grados, girando, valido (columnas añadidas)
+  - Vectorizado: procesa todo el tracking de una vez
+  - Verificación: 4 casos sintéticos en `scratch/verifica_giro_aire.py`
+
+🔔 **`vuelo.sigue_libre_por_jugada()` está REAL**
+  - Ubicación: `backend/calculos/vuelo.py`
+  - Firma: `sigue_libre_por_jugada(cuadros, plays, players, pff)`
+  - Retorna: DataFrame con gameId, playId, valido, sigue_libre
+  - Significado: sigue_libre = objetivo a ≥3 yd en pass_forward
+  - Cobertura semana 1: 778 jugadas (74.0% del total de pases)
   - **Archivos creados:**
     - `backend/calculos/vuelo.py` - Módulo de ventaja al lanzar (constantes inline)
     - `backend/calculos/__init__.py` - Inicializador
@@ -65,10 +105,13 @@ Pendiente
 
 ### Pendiente:
 
-- [ ] Tarea 2: Giro por cuadro (función real)
-- [ ] Tarea 3: Giro principal por ruta (pasar prototipo a módulo)
-- [ ] Tarea 4: Resumen de giros e H2
 - [ ] Tarea 7: Mapas de calor
 - [ ] Tarea 8: Cinta
 - [ ] Tarea 9: Integración con A
 - [ ] Tarea 10: Verificación final
+
+### Notas:
+
+- **H2 rechazada:** Los giros NO diferencian rendimiento (+0.35 yd brusco vs sin giro, IC se solapan)
+- **H3 confirmada:** La ventaja al lanzar SÍ predice conversión (+30.7 pp abierto vs cerrado, IC no se solapan)
+- **Prioridad narrativa:** P3 (ventaja al lanzar) > P2 (giros)

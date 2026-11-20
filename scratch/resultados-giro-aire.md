@@ -462,3 +462,76 @@ Ventaja al lanzar:
 
 **GO:** El tracking se corta 0.5s después de pass_forward (confirmado 100%), pero P3 redefinido como "ventaja al lanzar" tiene señal fuerte SIN sesgo: +30.7 puntos con ≥3 yd, +12.4 puntos abriéndose vs cerrándose (semana 1, n=778 pases identificados por nombre).
 
+---
+
+## H2: LOS GIROS NO DIFERENCIAN RENDIMIENTO
+
+### Datos (semana 1, n=4433 rutas):
+
+**Distribución de tipos:**
+- Sin giro (<30°): 2839 (64.0%)
+- Suave (30-60°): 1289 (29.1%)
+- Brusco (≥60°): 305 (6.9%)
+
+**Verificación:** El 6.9% de rutas con giro brusco es coherente con la prueba de vida (4.3%) y el prototipo corregido (6.9%).
+
+---
+
+### POR TIPO DE GIRO:
+
+**SIN GIRO (<30°, n=2839):**
+- Separación ganada: **-0.32 yd** (IC 90%: [-0.36, -0.29])
+- % libre en pass_forward: **49.9%** (IC 90%: [48.5, 51.5])
+
+**SUAVE (30-60°, n=1289):**
+- Separación ganada: **-0.23 yd** (IC 90%: [-0.28, -0.18])
+- % libre en pass_forward: **45.7%** (IC 90%: [43.4, 47.9])
+
+**BRUSCO (≥60°, n=305):**
+- Separación ganada: **+0.03 yd** (IC 90%: [-0.06, 0.13])
+- % libre en pass_forward: **46.9%** (IC 90%: [42.0, 51.8])
+
+---
+
+### H2 NO confirmado:
+
+**Observación clave:** TODOS los tipos pierden separación (o la mantienen en cero), incluyendo sin giro (-0.32 yd). Esto sugiere que la defensa se cierra naturalmente hacia el final de la ruta, independientemente del giro.
+
+**Diferencias:**
+- Brusco vs Sin giro: +0.03 - (-0.32) = **+0.35 yd** (muy pequeño, IC se solapan)
+- Suave vs Sin giro: -0.23 - (-0.32) = **+0.09 yd** (despreciable)
+
+**% libre:**
+- Sin giro: 49.9%
+- Suave: 45.7% (-4.2 pp)
+- Brusco: 46.9% (-3.0 pp)
+
+Los IC 90% se solapan en todos los casos, indicando que NO hay diferencias estadísticamente significativas.
+
+---
+
+### Insight:
+
+"Los giros NO diferencian rendimiento práctico: el giro brusco gana solo +0.35 yd más que sin giro (IC se solapan), y el % libre es similar (46.9% vs 49.9%). La separación disminuye en todos los casos al acercarse al lanzamiento."
+
+---
+
+### Implicaciones:
+
+1. **H2 rechazada:** Los giros NO son un diferenciador práctico de rendimiento.
+2. **La ventaja al lanzar (H3) es más predictiva:** +30.7 pp entre abierto y cerrado.
+3. **La defensa se adapta:** Independientemente del giro, la separación tiende a disminuir hacia el lanzamiento.
+4. **Recomendación:** Priorizar P3 (ventaja al lanzar) sobre P2 (giros) en la narrativa final.
+
+---
+
+### Notas de implementación:
+
+- **Módulo:** `backend/calculos/giros.py`
+- **Funciones:**
+  - `giro_por_cuadro(cuadros)` - Vectorizado, verificado con 4 casos sintéticos
+  - `construir_giros(cuadros, plays, players, pff)` - Giro principal por ruta
+  - `resumen(giros_df, filtro)` - Resumen por tipo con IC 90%
+- **Constantes:** VEL_MIN_GIRO = 2.0, GIRO_SUAVE = 30, GIRO_BRUSCO = 60, IC_NIVEL = 0.90
+- **Verificación:** `scratch/verifica_giro_aire.py` - 4 casos sintéticos pasan ✓
+
