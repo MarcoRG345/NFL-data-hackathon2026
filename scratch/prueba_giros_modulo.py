@@ -80,7 +80,7 @@ for item in resumen_data['por_tipo']:
     
     if pct_libre is not None:
         ic_str = f"IC 90%: [{ic_libre[0]:.1f}, {ic_libre[1]:.1f}]" if ic_libre else "IC: N/A"
-        print(f"  % libre en pass_forward (≥{ABIERTO_YD} yd): {pct_libre:.1f}% ({ic_str})")
+        print(f"  % libre en pass_forward (>={ABIERTO_YD} yd): {pct_libre:.1f}% ({ic_str})")
     else:
         print(f"  % libre en pass_forward: N/A")
 
@@ -100,9 +100,9 @@ print(f"Prueba de vida reportó: 4.3%")
 print(f"Prototipo corregido reportó: 6.9%")
 
 if 5 <= pct_brusco <= 10:
-    print(f"\n✓ OK: El % brusco ({pct_brusco:.1f}%) es coherente")
+    print(f"\nOK: El % brusco ({pct_brusco:.1f}%) es coherente")
 else:
-    print(f"\n⚠ ADVERTENCIA: El % brusco ({pct_brusco:.1f}%) está fuera del rango esperado (5-10%)")
+    print(f"\nADVERTENCIA: El % brusco ({pct_brusco:.1f}%) está fuera del rango esperado (5-10%)")
 
 print("\n" + "="*80)
 print("PRUEBA COMPLETADA")

@@ -498,27 +498,27 @@ Ventaja al lanzar:
 **Observación clave:** TODOS los tipos pierden separación (o la mantienen en cero), incluyendo sin giro (-0.32 yd). Esto sugiere que la defensa se cierra naturalmente hacia el final de la ruta, independientemente del giro.
 
 **Diferencias:**
-- Brusco vs Sin giro: +0.03 - (-0.32) = **+0.35 yd** (muy pequeño, IC se solapan)
+- Brusco vs Sin giro: +0.03 - (-0.32) = **+0.35 yd** (IC NO se solapan: [-0.06, 0.13] vs [-0.36, -0.29])
 - Suave vs Sin giro: -0.23 - (-0.32) = **+0.09 yd** (despreciable)
 
 **% libre:**
-- Sin giro: 49.9%
-- Suave: 45.7% (-4.2 pp)
-- Brusco: 46.9% (-3.0 pp)
+- Sin giro: 49.9% (IC 90%: [48.5, 51.5])
+- Suave: 45.7% (IC 90%: [43.4, 47.9])
+- Brusco: 46.9% (IC 90%: [42.0, 51.8])
 
-Los IC 90% se solapan en todos los casos, indicando que NO hay diferencias estadísticamente significativas.
+Los IC 90% de % libre SÍ se solapan, indicando que NO hay diferencias estadísticamente significativas en el resultado final.
 
 ---
 
 ### Insight:
 
-"Los giros NO diferencian rendimiento práctico: el giro brusco gana solo +0.35 yd más que sin giro (IC se solapan), y el % libre es similar (46.9% vs 49.9%). La separación disminuye en todos los casos al acercarse al lanzamiento."
+"H2 parcial: el giro brusco conserva separación (+0.35 yd vs sin giro) pero no aumenta el % libre en pass_forward (IC se solapan)."
 
 ---
 
 ### Implicaciones:
 
-1. **H2 rechazada:** Los giros NO son un diferenciador práctico de rendimiento.
+1. **H2 parcial:** El giro brusco conserva separación (+0.35 yd vs sin giro, IC NO se solapan) pero no aumenta el % libre en pass_forward (IC se solapan).
 2. **La ventaja al lanzar (H3) es más predictiva:** +30.7 pp entre abierto y cerrado.
 3. **La defensa se adapta:** Independientemente del giro, la separación tiende a disminuir hacia el lanzamiento.
 4. **Recomendación:** Priorizar P3 (ventaja al lanzar) sobre P2 (giros) en la narrativa final.

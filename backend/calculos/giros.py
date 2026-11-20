@@ -491,7 +491,14 @@ def resumen(giros_df, filtro='decisivo'):
         if abs(diff_libre_brusco) > 5:
             diferencias.append(f"giro brusco: {diff_libre_brusco:+.1f} pp libre")
     
-    if len(diferencias) > 0:
+    # Generar insight: H2 es parcial
+    if sin_giro_data and brusco_data and sin_giro_data['sep_ganada_media'] is not None and brusco_data['sep_ganada_media'] is not None:
+        diff_sep_brusco = brusco_data['sep_ganada_media'] - sin_giro_data['sep_ganada_media']
+        if diff_sep_brusco > 0.3:
+            insight = f"H2 parcial: el giro brusco conserva separación ({diff_sep_brusco:+.1f} yd vs sin giro) pero no aumenta el % libre en pass_forward (IC se solapan)."
+        else:
+            insight = "Los tipos de giro NO muestran diferencias prácticas en separación ganada o % libre."
+    elif len(diferencias) > 0:
         insight = f"Los giros diferencian rendimiento: {'; '.join(diferencias)}."
     else:
         insight = "Los tipos de giro NO muestran diferencias prácticas en separación ganada o % libre."

@@ -37,11 +37,8 @@ Pendiente
 
 ✓ **Tarea 4:** Resumen de giros e H2 - COMPLETO
   - **Función:** `giros.resumen(filtro)` - Por tipo con IC 90%
-  - **H2 NO confirmado:** Giros NO diferencian rendimiento práctico
-    - Brusco vs Sin giro: +0.35 yd (IC se solapan)
-    - % libre similar: 46.9% vs 49.9% (diferencia no significativa)
-    - Todos los tipos pierden separación al acercarse al lanzamiento
-  - **Insight:** La ventaja al lanzar (H3) es más predictiva que los giros (H2)
+  - **H2 parcial:** El giro brusco conserva separación (+0.35 yd vs sin giro, IC NO se solapan) pero no aumenta el % libre en pass_forward (IC se solapan)
+  - **Insight:** "H2 parcial: el giro brusco conserva separación (+0.35 yd vs sin giro) pero no aumenta el % libre en pass_forward (IC se solapan)."
   - **Resultados:** `scratch/resultados-giro-aire.md` actualizado con H2
 
 ✓ **Tareas 5 y 6:** Ventaja al lanzar (vuelo) - COMPLETO Y CORREGIDO
@@ -103,6 +100,6 @@ Pendiente
 
 ### Notas:
 
-- **H2 rechazada:** Los giros NO diferencian rendimiento (+0.35 yd brusco vs sin giro, IC se solapan)
+- **H2 parcial:** El giro brusco conserva separación (+0.35 yd vs sin giro, IC NO se solapan) pero no aumenta el % libre en pass_forward (IC se solapan)
 - **H3 confirmada:** La ventaja al lanzar SÍ predice conversión (+30.7 pp abierto vs cerrado, IC no se solapan)
 - **Prioridad narrativa:** P3 (ventaja al lanzar) > P2 (giros)
