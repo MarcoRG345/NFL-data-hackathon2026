@@ -44,6 +44,34 @@ Específicamente: ¿Pueden los equipos predecir si un receptor llegará a tiempo
 - Replays visuales sincronizados con métricas en tiempo real
 - Mapas de calor de giros y eficiencia espacial
 
+### Visualizaciones del Dashboard
+
+#### P1: Dos relojes - La carrera segundo a segundo
+![Análisis de la carrera de los dos relojes](docs/images/screenshot-1-dos-relojes.png)
+
+*Gráfica temporal que muestra el porcentaje de jugadas donde el receptor está libre vs. bajo presión, sincronizado con el tiempo desde el snap. Incluye resultados de la carrera (gana receptor vs. sin presión sobre el QB).*
+
+#### P1: Replay de jugadas - Vista de cancha con animación
+![Replay de jugada con posiciones de jugadores](docs/images/screenshot-2-replay-receptor.png)
+
+*Visualización interactiva de la cancha que muestra la posición frame por frame de todos los jugadores. Permite seleccionar entre tres escenarios: "Receptor gana la carrera", "Defensa gana la carrera" y "Sin presión sobre el QB".*
+
+![Replay alternativo con presión sobre QB](docs/images/screenshot-3-replay-sin-presion.png)
+
+*Vista alternativa del replay mostrando escenarios donde no hay presión efectiva sobre el quarterback.*
+
+#### P2: El giro - Separación ganada por tipo de giro
+![Gráfica de separación por tipo de giro](docs/images/screenshot-4-separacion-giro.png)
+
+*Análisis comparativo de la separación (en yardas) ganada 0.5 segundos después del giro, clasificada por tipo: sin giro, giro suave y giro brusco. Muestra el impacto de diferentes técnicas de cambio de dirección en la creación de espacio.*
+
+#### P3: Ventaja al lanzar - Análisis de separación y tendencias
+![Gráficas de porcentaje completo por separación y tendencia](docs/images/screenshot-5-ventaja-lanzar.png)
+
+*Dos gráficas que muestran:*
+- *Porcentaje de pases completos según la separación al momento del lanzamiento (cerrado, disputado, abierto)*
+- *Porcentaje de pases completos según la tendencia del receptor al momento del lanzamiento (abriéndose, estable, cerrándose)*
+
 ## Cómo se ejecuta
 
 ### Instalación
