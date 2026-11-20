@@ -1,4 +1,4 @@
-# La carrera de los dos relojes · Kit Two Clocks
+En README.md, arregla las imágenes rotas: usa las 8 capturas que están en docs/images (los nombres tienen espacios, así que en los enlaces escribe los espacios como %20, por ejemplo docs/images/Captura%20de%20pantalla%202026-11-20%20125101.png). Ábrelas para ver qué sección del dashboard muestra cada una y ponles un título corto (Resumen, P1, P2, P3, cancha, etc.). Quita los enlaces a imágenes que no existan. No toques ningún otro archivo, en especial .hackathon/ENTREGA.md.# La carrera de los dos relojes · Kit Two Clocks
 
 ## Pregunta
 
@@ -46,31 +46,43 @@ Específicamente: ¿Pueden los equipos predecir si un receptor llegará a tiempo
 
 ### Visualizaciones del Dashboard
 
-#### P1: Dos relojes - La carrera segundo a segundo
-![Análisis de la carrera de los dos relojes](docs/images/screenshot-1-dos-relojes.png)
+#### P1: Dos relojes
+![P1: La carrera segundo a segundo](docs/images/Captura%20de%20pantalla%202026-11-20%20123044.png)
 
-*Gráfica temporal que muestra el porcentaje de jugadas donde el receptor está libre vs. bajo presión, sincronizado con el tiempo desde el snap. Incluye resultados de la carrera (gana receptor vs. sin presión sobre el QB).*
+*Gráfica temporal que muestra el porcentaje de jugadas donde el receptor está libre vs. bajo presión, sincronizado con el tiempo desde el snap. Incluye resultados de la carrera (gana receptor 34.7% vs. sin presión 64.7%).*
 
-#### P1: Replay de jugadas - Vista de cancha con animación
-![Replay de jugada con posiciones de jugadores](docs/images/screenshot-2-replay-receptor.png)
+![P1: La carrera segundo a segundo - vista alternativa](docs/images/Captura%20de%20pantalla%202026-11-20%20125143.png)
 
-*Visualización interactiva de la cancha que muestra la posición frame por frame de todos los jugadores. Permite seleccionar entre tres escenarios: "Receptor gana la carrera", "Defensa gana la carrera" y "Sin presión sobre el QB".*
+*Vista completa de P1 mostrando la gráfica temporal con la mediana libre en 1.0s y el resultado de la carrera.*
 
-![Replay alternativo con presión sobre QB](docs/images/screenshot-3-replay-sin-presion.png)
+#### Cancha: Replay con animación de jugadas
+![Cancha: Defensa gana la carrera](docs/images/Captura%20de%20pantalla%202026-11-20%20124851.png)
 
-*Vista alternativa del replay mostrando escenarios donde no hay presión efectiva sobre el quarterback.*
+*Visualización interactiva de la cancha mostrando posiciones de todos los jugadores frame por frame. Vista del escenario "Defensa gana la carrera".*
 
-#### P2: El giro - Separación ganada por tipo de giro
-![Gráfica de separación por tipo de giro](docs/images/screenshot-4-separacion-giro.png)
+![Cancha: Sin presión sobre el QB](docs/images/Captura%20de%20pantalla%202026-11-20%20125050.png)
 
-*Análisis comparativo de la separación (en yardas) ganada 0.5 segundos después del giro, clasificada por tipo: sin giro, giro suave y giro brusco. Muestra el impacto de diferentes técnicas de cambio de dirección en la creación de espacio.*
+*Vista del replay mostrando el escenario "Sin presión sobre el QB" donde no hay presión efectiva sobre el quarterback.*
 
-#### P3: Ventaja al lanzar - Análisis de separación y tendencias
-![Gráficas de porcentaje completo por separación y tendencia](docs/images/screenshot-5-ventaja-lanzar.png)
+#### P2: El giro
+![P2: Separación ganada por tipo de giro](docs/images/Captura%20de%20pantalla%202026-11-20%20123121.png)
+
+*Análisis comparativo de la separación (en yardas) ganada 0.5 segundos después del giro, clasificada por tipo: sin giro (<30°), suave (30-60°) y brusco (≥60°).*
+
+![P2: Separación por tipo de giro con valores](docs/images/Captura%20de%20pantalla%202026-11-20%20125101.png)
+
+*Vista detallada de P2 mostrando los valores exactos de separación: -0.32 yd (sin giro), -0.24 yd (suave), +0.02 yd (brusco). Hipótesis parcial: el giro brusco conserva separación (+0.3 yd vs sin giro) pero no aumenta el % libre en pass_forward.*
+
+#### P3: Ventaja al lanzar
+![P3: Porcentaje completo por separación y tendencia al lanzar](docs/images/Captura%20de%20pantalla%202026-11-20%20123138.png)
 
 *Dos gráficas que muestran:*
-- *Porcentaje de pases completos según la separación al momento del lanzamiento (cerrado, disputado, abierto)*
+- *Porcentaje de pases completos según la separación al momento del lanzamiento (cerrado <1.5 yd, disputado 1.5-3 yd, abierto ≥3 yd)*
 - *Porcentaje de pases completos según la tendencia del receptor al momento del lanzamiento (abriéndose, estable, cerrándose)*
+
+![P3: Separación y tendencia al lanzar - vista detallada](docs/images/Captura%20de%20pantalla%202026-11-20%20125115.png)
+
+*Vista detallada de las gráficas de P3 sin el encabezado. La ventaja al lanzar predice conversión: +38.4 puntos con objetivo abierto (≥3.0 yd); +14.1 puntos abriéndose vs cerrándose.*
 
 ## Cómo se ejecuta
 
