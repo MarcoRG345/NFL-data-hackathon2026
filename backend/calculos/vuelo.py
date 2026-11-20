@@ -11,31 +11,72 @@ SEP_CERRADA_YD = 1.5  # definición actualizada en pregunta.md
 TENDENCIA_UMBRAL_YD = 0.5
 BOOTSTRAP_REPS = 1000
 SEMILLA = 42
-IC_NIVEL = 0.90
+IC_NIVEL = 0.90  # 90% de confianza (pregunta.md)
 MIN_N_IC = 20
+
+
+def normalizar_apellido(apellido):
+    """
+    Normaliza apellido: quita sufijos (Jr., Sr., II, III, IV) y guiones
+    """
+    if pd.isna(apellido):
+        return None
+    
+    apellido = str(apellido).strip()
+    
+    # Quitar sufijos comunes
+    sufijos = ['Jr.', 'Sr.', 'II', 'III', 'IV', 'V']
+    for sufijo in sufijos:
+        if apellido.endswith(' ' + sufijo):
+            apellido = apellido[:-len(sufijo)-1].strip()
+    
+    # Quitar guiones
+    apellido = apellido.replace('-', '')
+    
+    return apellido.lower()
 
 
 def extraer_objetivo_de_descripcion(descripcion):
     """
     Extrae apellido del receptor objetivo de playDescription
-    Busca el texto después de " to "
+    Busca " to " (pase) o "intended for " (intercepción)
+    
+    Returns:
+        (apellido_normalizado, inicial_o_None)
     """
-    if pd.isna(descripcion) or ' to ' not in descripcion:
-        return None
+    if pd.isna(descripcion):
+        return None, None
     
-    texto_despues_to = descripcion.split(' to ', 1)[1]
-    palabras = texto_despues_to.split()
+    texto_buscar = None
+    
+    # Buscar " to "
+    if ' to ' in descripcion:
+        texto_buscar = descripcion.split(' to ', 1)[1]
+    # Buscar "intended for "
+    elif 'intended for ' in descripcion:
+        texto_buscar = descripcion.split('intended for ', 1)[1]
+    
+    if texto_buscar is None:
+        return None, None
+    
+    palabras = texto_buscar.split()
     if not palabras:
-        return None
+        return None, None
     
-    nombre = palabras[0]
-    if '.' in nombre:
-        apellido = nombre.split('.')[-1]
-        return apellido
-    return nombre
+    nombre_completo = palabras[0]
+    
+    # Separar inicial y apellido
+    if '.' in nombre_completo:
+        partes = nombre_completo.split('.')
+        if len(partes) >= 2:
+            inicial = partes[0]
+            apellido = '.'.join(partes[1:])
+            return normalizar_apellido(apellido), inicial
+    
+    return normalizar_apellido(nombre_completo), None
 
 
-def construir(cuadros, plays, players, pff):
+def construir(cuadros, plays, players, pff, usar_respaldo=False):
     """
     Construye tabla de ventaja al lanzar (una fila por jugada con pase)
     
@@ -44,6 +85,7 @@ def construir(cuadros, plays, players, pff):
         plays: DataFrame con jugadas
         players: DataFrame con jugadores
         pff: DataFrame con roles PFF
+        usar_respaldo: Si True, usa receptor más cercano cuando no se encuentra por nombre
     
     Returns:
         DataFrame con: gameId, playId, objetivo_id, objetivo_nombre, aproximado,
@@ -64,9 +106,11 @@ def construir(cuadros, plays, players, pff):
     jugadas_pase = plays[plays['passResult'].isin(['C', 'I', 'IN'])].copy()
     
     # Extraer objetivo de playDescription
-    jugadas_pase['apellido_objetivo'] = jugadas_pase['playDescription'].apply(
+    objetivo_info = jugadas_pase['playDescription'].apply(
         extraer_objetivo_de_descripcion
     )
+    jugadas_pase['apellido_objetivo'] = objetivo_info.apply(lambda x: x[0] if x else None)
+    jugadas_pase['inicial_objetivo'] = objetivo_info.apply(lambda x: x[1] if x else None)
     
     # Frames de pass_forward
     pass_forward_frames = cuadros_completo[
@@ -80,6 +124,7 @@ def construir(cuadros, plays, players, pff):
         game_id = jugada['gameId']
         play_id = jugada['playId']
         apellido_objetivo = jugada['apellido_objetivo']
+        inicial_objetivo = jugada['inicial_objetivo']
         pass_result = jugada['passResult']
         
         # Frame de pass_forward
@@ -102,60 +147,78 @@ def construir(cuadros, plays, players, pff):
         objetivo_id = None
         objetivo_nombre = None
         aproximado = False
+        valido = True  # Por defecto es válido
+        
+        # Si no hay apellido_objetivo (spike, throaway), marcar como NO VÁLIDO
+        if pd.isna(apellido_objetivo):
+            valido = False
+            continue  # No procesar esta jugada
         
         # Intentar encontrar objetivo por apellido
-        if pd.notna(apellido_objetivo):
-            receptores = tracking_jugada[
-                (tracking_jugada['pff_role'] == 'Pass Route') &
-                (tracking_jugada['displayName'].notna())
-            ].copy()
+        receptores = tracking_jugada[
+            (tracking_jugada['pff_role'] == 'Pass Route') &
+            (tracking_jugada['displayName'].notna())
+        ].copy()
+        
+        if len(receptores) > 0:
+            # Normalizar apellidos de receptores
+            receptores['apellido_normalizado'] = receptores['displayName'].apply(
+                lambda x: normalizar_apellido(x.split()[-1] if pd.notna(x) and ' ' in x else x)
+            )
             
-            if len(receptores) > 0:
-                receptores['apellido'] = receptores['displayName'].apply(
-                    lambda x: x.split()[-1] if pd.notna(x) and ' ' in x else x
+            # Filtrar por apellido
+            objetivo_matches = receptores[
+                receptores['apellido_normalizado'] == apellido_objetivo
+            ]
+            
+            # Si hay múltiples con el mismo apellido, usar inicial
+            if len(objetivo_matches) > 1 and inicial_objetivo is not None:
+                objetivo_matches['inicial'] = objetivo_matches['displayName'].apply(
+                    lambda x: x.split()[0][0] if pd.notna(x) and ' ' in x else None
                 )
+                objetivo_matches = objetivo_matches[
+                    objetivo_matches['inicial'] == inicial_objetivo
+                ]
+            
+            if len(objetivo_matches) > 0:
+                objetivo_id = objetivo_matches['nflId'].iloc[0]
+                objetivo_nombre = objetivo_matches['displayName'].iloc[0]
+                aproximado = False
+        
+        # Si no se encontró por nombre: NO usar respaldo, saltar jugada
+        if objetivo_id is None:
+            # RESPALDO (solo si usar_respaldo=True): usar receptor más cercano al balón para C o I
+            if usar_respaldo and pass_result in ['C', 'I']:
+                # Último cuadro disponible (tracking se corta 0.5s después de forward)
+                max_frame = tracking_jugada['frameId'].max()
                 
-                objetivo_matches = receptores[
-                    receptores['apellido'].str.lower() == apellido_objetivo.lower()
+                receptores_ultimo = tracking_jugada[
+                    (tracking_jugada['frameId'] == max_frame) &
+                    (tracking_jugada['pff_role'] == 'Pass Route')
                 ]
                 
-                if len(objetivo_matches) > 0:
-                    objetivo_id = objetivo_matches['nflId'].iloc[0]
-                    objetivo_nombre = objetivo_matches['displayName'].iloc[0]
-                    aproximado = False
-        
-        # RESPALDO: Si no se encontró por apellido Y es C o I, usar receptor más cercano al balón
-        if objetivo_id is None and pass_result in ['C', 'I']:
-            # Último cuadro disponible (tracking se corta 0.5s después de forward)
-            max_frame = tracking_jugada['frameId'].max()
-            
-            receptores_ultimo = tracking_jugada[
-                (tracking_jugada['frameId'] == max_frame) &
-                (tracking_jugada['pff_role'] == 'Pass Route')
-            ]
-            
-            balon_ultimo = tracking_jugada[
-                (tracking_jugada['frameId'] == max_frame) &
-                (tracking_jugada['team'] == 'football')
-            ]
-            
-            if len(receptores_ultimo) > 0 and len(balon_ultimo) > 0:
-                balon_x, balon_y = balon_ultimo.iloc[0]['x'], balon_ultimo.iloc[0]['y']
+                balon_ultimo = tracking_jugada[
+                    (tracking_jugada['frameId'] == max_frame) &
+                    (tracking_jugada['team'] == 'football')
+                ]
                 
-                receptores_ultimo_copy = receptores_ultimo.copy()
-                receptores_ultimo_copy['dist_balon'] = np.sqrt(
-                    (receptores_ultimo_copy['x'] - balon_x)**2 +
-                    (receptores_ultimo_copy['y'] - balon_y)**2
-                )
-                
-                objetivo_match = receptores_ultimo_copy.loc[receptores_ultimo_copy['dist_balon'].idxmin()]
-                objetivo_id = objetivo_match['nflId']
-                objetivo_nombre = objetivo_match['displayName']
-                aproximado = True  # Objetivo aproximado por distancia al balón
-        
-        # Si aún no hay objetivo, saltar esta jugada
-        if objetivo_id is None:
-            continue
+                if len(receptores_ultimo) > 0 and len(balon_ultimo) > 0:
+                    balon_x, balon_y = balon_ultimo.iloc[0]['x'], balon_ultimo.iloc[0]['y']
+                    
+                    receptores_ultimo_copy = receptores_ultimo.copy()
+                    receptores_ultimo_copy['dist_balon'] = np.sqrt(
+                        (receptores_ultimo_copy['x'] - balon_x)**2 +
+                        (receptores_ultimo_copy['y'] - balon_y)**2
+                    )
+                    
+                    objetivo_match = receptores_ultimo_copy.loc[receptores_ultimo_copy['dist_balon'].idxmin()]
+                    objetivo_id = objetivo_match['nflId']
+                    objetivo_nombre = objetivo_match['displayName']
+                    aproximado = True  # Objetivo aproximado por distancia al balón
+            
+            # Si aún no hay objetivo, saltar esta jugada
+            if objetivo_id is None:
+                continue
         
         # Separación en forward_frame
         objetivo_forward = tracking_jugada[
@@ -291,22 +354,34 @@ def bootstrap_intervalo(data, reps=BOOTSTRAP_REPS, nivel=IC_NIVEL):
     return bajo, alto
 
 
-def resumen(ventaja_df, filtro='decisivo'):
+def resumen(ventaja_df, ventaja_robustez_df=None, filtro='decisivo'):
     """
     Genera resumen de ventaja al lanzar
     
     Args:
-        ventaja_df: DataFrame de construir()
+        ventaja_df: DataFrame de construir() sin respaldo (solo nombres encontrados)
+        ventaja_robustez_df: DataFrame con respaldo para tabla de robustez (opcional)
         filtro: nombre del filtro (para metadata)
     
     Returns:
-        dict con: filtro, n, n_aproximado, por_separacion, por_tendencia, insight
+        dict con: filtro, n_por_nombre, n_sin_objetivo, n_aproximado, 
+                  tabla_principal, tabla_robustez, insight
     """
-    n_total = len(ventaja_df)
-    n_aproximado = ventaja_df['aproximado'].sum()
+    n_por_nombre = len(ventaja_df)
+    n_aproximado = 0
+    
+    # Si hay tabla de robustez, calcular aproximados
+    if ventaja_robustez_df is not None:
+        n_total_robustez = len(ventaja_robustez_df)
+        n_aproximado = n_total_robustez - n_por_nombre
+    
+    # Tabla principal (solo objetivos por nombre)
+    tabla_principal = {
+        'por_separacion': [],
+        'por_tendencia': []
+    }
     
     # Por separación
-    por_separacion = []
     for franja in ['cerrado', 'disputado', 'abierto']:
         subset = ventaja_df[ventaja_df['franja_sep'] == franja]
         if len(subset) == 0:
@@ -318,7 +393,7 @@ def resumen(ventaja_df, filtro='decisivo'):
         
         ic_bajo, ic_alto = bootstrap_intervalo(completos.values)
         
-        por_separacion.append({
+        tabla_principal['por_separacion'].append({
             'franja': franja,
             'n': n,
             'pct_completo': round(pct_completo, 1),
@@ -326,7 +401,6 @@ def resumen(ventaja_df, filtro='decisivo'):
         })
     
     # Por tendencia
-    por_tendencia = []
     for tend in ['abriendose', 'estable', 'cerrandose']:
         subset = ventaja_df[ventaja_df['tendencia'] == tend]
         if len(subset) == 0:
@@ -338,21 +412,67 @@ def resumen(ventaja_df, filtro='decisivo'):
         
         ic_bajo, ic_alto = bootstrap_intervalo(completos.values)
         
-        por_tendencia.append({
+        tabla_principal['por_tendencia'].append({
             'tendencia': tend,
             'n': n,
             'pct_completo': round(pct_completo, 1),
             'ic': [round(ic_bajo, 1), round(ic_alto, 1)] if ic_bajo is not None else None
         })
     
-    # Insight
+    # Tabla de robustez (con respaldo)
+    tabla_robustez = None
+    if ventaja_robustez_df is not None:
+        tabla_robustez = {
+            'por_separacion': [],
+            'por_tendencia': []
+        }
+        
+        # Por separación
+        for franja in ['cerrado', 'disputado', 'abierto']:
+            subset = ventaja_robustez_df[ventaja_robustez_df['franja_sep'] == franja]
+            if len(subset) == 0:
+                continue
+            
+            n = len(subset)
+            completos = subset['completo'].astype(int)
+            pct_completo = completos.mean() * 100
+            
+            ic_bajo, ic_alto = bootstrap_intervalo(completos.values)
+            
+            tabla_robustez['por_separacion'].append({
+                'franja': franja,
+                'n': n,
+                'pct_completo': round(pct_completo, 1),
+                'ic': [round(ic_bajo, 1), round(ic_alto, 1)] if ic_bajo is not None else None
+            })
+        
+        # Por tendencia
+        for tend in ['abriendose', 'estable', 'cerrandose']:
+            subset = ventaja_robustez_df[ventaja_robustez_df['tendencia'] == tend]
+            if len(subset) == 0:
+                continue
+            
+            n = len(subset)
+            completos = subset['completo'].astype(int)
+            pct_completo = completos.mean() * 100
+            
+            ic_bajo, ic_alto = bootstrap_intervalo(completos.values)
+            
+            tabla_robustez['por_tendencia'].append({
+                'tendencia': tend,
+                'n': n,
+                'pct_completo': round(pct_completo, 1),
+                'ic': [round(ic_bajo, 1), round(ic_alto, 1)] if ic_bajo is not None else None
+            })
+    
+    # Insight (de tabla principal)
     # Comparar abierto vs cerrado
-    abierto_pct = next((x['pct_completo'] for x in por_separacion if x['franja'] == 'abierto'), None)
-    cerrado_pct = next((x['pct_completo'] for x in por_separacion if x['franja'] == 'cerrado'), None)
+    abierto_pct = next((x['pct_completo'] for x in tabla_principal['por_separacion'] if x['franja'] == 'abierto'), None)
+    cerrado_pct = next((x['pct_completo'] for x in tabla_principal['por_separacion'] if x['franja'] == 'cerrado'), None)
     
     # Comparar abriéndose vs cerrándose
-    abriendose_pct = next((x['pct_completo'] for x in por_tendencia if x['tendencia'] == 'abriendose'), None)
-    cerrandose_pct = next((x['pct_completo'] for x in por_tendencia if x['tendencia'] == 'cerrandose'), None)
+    abriendose_pct = next((x['pct_completo'] for x in tabla_principal['por_tendencia'] if x['tendencia'] == 'abriendose'), None)
+    cerrandose_pct = next((x['pct_completo'] for x in tabla_principal['por_tendencia'] if x['tendencia'] == 'cerrandose'), None)
     
     if abierto_pct is not None and cerrado_pct is not None:
         diff_sep = abierto_pct - cerrado_pct
@@ -376,9 +496,9 @@ def resumen(ventaja_df, filtro='decisivo'):
     
     return {
         'filtro': filtro,
-        'n': n_total,
+        'n_por_nombre': n_por_nombre,
         'n_aproximado': n_aproximado,
-        'por_separacion': por_separacion,
-        'por_tendencia': por_tendencia,
+        'tabla_principal': tabla_principal,
+        'tabla_robustez': tabla_robustez,
         'insight': insight
     }

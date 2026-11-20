@@ -1,5 +1,6 @@
 """
 Prueba del módulo vuelo.py cargando 1 semana directo
+Genera tabla principal (solo por nombre) y tabla de robustez (con respaldo)
 """
 import pandas as pd
 import sys
@@ -11,7 +12,7 @@ from backend.calculos import vuelo
 ABIERTO_YD = vuelo.ABIERTO_YD
 
 print("="*80)
-print("PRUEBA DEL MÓDULO vuelo.py")
+print("PRUEBA DEL MÓDULO vuelo.py - CORREGIDO")
 print("="*80)
 
 # Cargar datos semana 1
@@ -33,41 +34,65 @@ cuadros = pd.concat(tracking_list, ignore_index=True)
 print(f"  Jugadas: {len(plays_semana1)}")
 print(f"  Cuadros: {len(cuadros)}")
 
-# Normalización básica (ya hecha en el prototipo)
-# Por simplicidad, asumimos que el tracking ya está normalizado
-# En producción, se haría en backend/base/normalizacion.py
+# Total de pases
+pases_totales = len(plays_semana1[plays_semana1['passResult'].isin(['C', 'I', 'IN'])])
+print(f"  Pases totales (C/I/IN): {pases_totales}")
 
-# 1. Construir ventaja
-print("\n1. CONSTRUIR VENTAJA AL LANZAR")
-ventaja_df = vuelo.construir(cuadros, plays_semana1, players, pff)
-print(f"  Pases analizados: {len(ventaja_df)}")
-print(f"  Aproximados: {ventaja_df['aproximado'].sum()}")
+# 1. Construir ventaja SIN RESPALDO (solo por nombre)
+print("\n1. CONSTRUIR VENTAJA AL LANZAR (solo por nombre)")
+ventaja_principal = vuelo.construir(cuadros, plays_semana1, players, pff, usar_respaldo=False)
+print(f"  Identificados por nombre: {len(ventaja_principal)}")
 
-# 2. sigue_libre_por_jugada
-print("\n2. sigue_libre_por_jugada()")
-sigue_libre_df = vuelo.sigue_libre_por_jugada(cuadros, plays_semana1, players, pff)
-print(f"  Jugadas: {len(sigue_libre_df)}")
-print(f"  Con ventaja (>={ABIERTO_YD} yd): {sigue_libre_df['sigue_libre'].sum()}")
+# 2. Construir ventaja CON RESPALDO (para robustez)
+print("\n2. CONSTRUIR CON RESPALDO (para tabla de robustez)")
+ventaja_robustez = vuelo.construir(cuadros, plays_semana1, players, pff, usar_respaldo=True)
+print(f"  Total con respaldo: {len(ventaja_robustez)}")
+print(f"  Aproximados: {ventaja_robustez['aproximado'].sum()}")
 
-# 3. Resumen
+# Calcular sin objetivo
+n_sin_objetivo = pases_totales - len(ventaja_robustez)
+print(f"  Sin objetivo (spike, throwaway): {n_sin_objetivo}")
+
+# 3. Resumen con ambas tablas
 print("\n3. RESUMEN")
-resumen_data = vuelo.resumen(ventaja_df, filtro='decisivo')
+resumen_data = vuelo.resumen(ventaja_principal, ventaja_robustez, filtro='decisivo')
 
 print(f"\nFiltro: {resumen_data['filtro']}")
-print(f"n: {resumen_data['n']}")
-print(f"n_aproximado: {resumen_data['n_aproximado']}")
+print(f"n por nombre: {resumen_data['n_por_nombre']}")
+print(f"n sin objetivo: {n_sin_objetivo}")
+print(f"n aproximado: {resumen_data['n_aproximado']}")
+
+print("\n" + "="*60)
+print("TABLA PRINCIPAL (solo identificados por nombre)")
+print("="*60)
 
 print("\nPor separación:")
-for item in resumen_data['por_separacion']:
-    ic_str = f"IC: {item['ic']}" if item['ic'] else "IC: N/A"
-    print(f"  {item['franja']}: {item['pct_completo']}% (n={item['n']}, {ic_str})")
+for item in resumen_data['tabla_principal']['por_separacion']:
+    ic_str = f"IC 90%: [{item['ic'][0]}, {item['ic'][1]}]" if item['ic'] else "IC: N/A"
+    print(f"  {item['franja']:12s}: {item['pct_completo']:5.1f}% (n={item['n']:3d}, {ic_str})")
 
 print("\nPor tendencia:")
-for item in resumen_data['por_tendencia']:
-    ic_str = f"IC: {item['ic']}" if item['ic'] else "IC: N/A"
-    print(f"  {item['tendencia']}: {item['pct_completo']}% (n={item['n']}, {ic_str})")
+for item in resumen_data['tabla_principal']['por_tendencia']:
+    ic_str = f"IC 90%: [{item['ic'][0]}, {item['ic'][1]}]" if item['ic'] else "IC: N/A"
+    print(f"  {item['tendencia']:12s}: {item['pct_completo']:5.1f}% (n={item['n']:3d}, {ic_str})")
 
-print(f"\nInsight: {resumen_data['insight']}")
+if resumen_data['tabla_robustez']:
+    print("\n" + "="*60)
+    print("TABLA DE ROBUSTEZ (con respaldo)")
+    print("="*60)
+    
+    print("\nPor separación:")
+    for item in resumen_data['tabla_robustez']['por_separacion']:
+        ic_str = f"IC 90%: [{item['ic'][0]}, {item['ic'][1]}]" if item['ic'] else "IC: N/A"
+        print(f"  {item['franja']:12s}: {item['pct_completo']:5.1f}% (n={item['n']:3d}, {ic_str})")
+    
+    print("\nPor tendencia:")
+    for item in resumen_data['tabla_robustez']['por_tendencia']:
+        ic_str = f"IC 90%: [{item['ic'][0]}, {item['ic'][1]}]" if item['ic'] else "IC: N/A"
+        print(f"  {item['tendencia']:12s}: {item['pct_completo']:5.1f}% (n={item['n']:3d}, {ic_str})")
+
+print(f"\n" + "="*60)
+print(f"Insight (de tabla principal): {resumen_data['insight']}")
 
 print("\n" + "="*80)
 print("PRUEBA COMPLETADA")

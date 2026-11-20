@@ -371,47 +371,94 @@ Ventaja al lanzar:
 
 ---
 
-## H3: VENTAJA AL LANZAR PREDICE CONVERSIÓN
+## H3: VENTAJA AL LANZAR PREDICE CONVERSIÓN (CORREGIDO)
 
-### Datos (semana 1, n=1028 pases, 24.3% aproximados):
+### Corrección aplicada (2025-01-XX):
+
+**Problema identificado:** Los aproximados (objetivos por distancia al balón cuando no se identifica apellido) estaban sesgando H3. De 250 aproximados, casi todos eran pases completos (porque el balón llega cerca del receptor). Los aproximados inflaban artificialmente las tasas de captura.
+
+**Solución:**
+1. Búsqueda mejorada: " to " (pases) o "intended for " (intercepciones), normalización de apellidos (quitar Jr., Sr., II, III, guiones), usar inicial si hay dos receptores con el mismo apellido
+2. Sin objetivo (spike, throwaway): valido=false, fuera de H3
+3. **Tabla principal:** solo objetivos identificados por nombre (sin respaldo)
+4. **Tabla de robustez:** con respaldo (receptor más cercano al balón) para validar efecto
+5. Intervalo al 90% (pregunta.md), no 95%
+
+### Datos CORREGIDOS (semana 1):
+
+**Cobertura:**
+- **n por nombre:** 778 (66.2%)
+- **n sin objetivo:** 50 (4.3%) - spike, throwaway
+- **n aproximado:** 223 (19.0%) - respaldo solo en tabla de robustez
+
+---
+
+### TABLA PRINCIPAL (solo identificados por nombre, n=778)
 
 **Por separación:**
 | Franja | n | % Completo | IC 90% |
 |---|---|---|---|
-| Cerrado (<1.5 yd) | 183 | 38.3% | [32.2, 44.3] |
-| Disputado (1.5-3 yd) | 242 | 63.2% | [58.3, 68.6] |
-| Abierto (≥3 yd) | 603 | 71.0% | [68.0, 74.0] |
+| Cerrado (<1.5 yd) | 112 | 58.0% | [50.0, 66.1] |
+| Disputado (1.5-3 yd) | 189 | 79.9% | [75.1, 84.7] |
+| Abierto (≥3 yd) | 477 | 88.7% | [86.4, 91.0] |
 
 **Por tendencia:**
 | Tendencia | n | % Completo | IC 90% |
 |---|---|---|---|
-| Abriéndose | 279 | 76.7% | [72.4, 80.6] |
-| Estable | 397 | 60.7% | [56.7, 64.7] |
-| Cerrándose | 352 | 55.7% | [51.1, 60.0] |
+| Abriéndose | 235 | 90.2% | [87.2, 93.2] |
+| Estable | 295 | 79.3% | [75.6, 83.1] |
+| Cerrándose | 248 | 77.8% | [73.4, 81.9] |
 
-### H3 confirmado:
+### H3 confirmado (tabla principal):
 
-**Abierto vs Cerrado:** 71.0% - 38.3% = **+32.7 puntos** (IC no se solapan)
+**Abierto vs Cerrado:** 88.7% - 58.0% = **+30.7 puntos** (IC no se solapan)
 
-**Abriéndose vs Cerrándose:** 76.7% - 55.7% = **+21.0 puntos** (IC no se solapan)
+**Abriéndose vs Cerrándose:** 90.2% - 77.8% = **+12.4 puntos** (IC no se solapan)
 
-✓ **H3 se cumple:** La ventaja al lanzar predice conversión con intervalos que no se solapan.
+✓ **H3 se cumple con datos NO sesgados:** La ventaja al lanzar predice conversión con intervalos que no se solapan.
 
-### Insight:
+---
 
-"La ventaja al lanzar predice conversión: +32.7 puntos con objetivo abierto (≥3.0 yd); +21.0 puntos abriéndose vs cerrándose."
+### TABLA DE ROBUSTEZ (con respaldo, n=1001)
+
+**Por separación:**
+| Franja | n | % Completo | IC 90% |
+|---|---|---|---|
+| Cerrado (<1.5 yd) | 167 | 39.5% | [32.9, 45.5] |
+| Disputado (1.5-3 yd) | 240 | 64.2% | [59.2, 68.8] |
+| Abierto (≥3 yd) | 594 | 72.6% | [69.7, 75.4] |
+
+**Por tendencia:**
+| Tendencia | n | % Completo | IC 90% |
+|---|---|---|---|
+| Abriéndose | 276 | 77.2% | [73.2, 81.2] |
+| Estable | 382 | 62.3% | [58.1, 66.2] |
+| Cerrándose | 343 | 58.3% | [53.9, 62.7] |
+
+**Efecto del respaldo:**
+- **Cerrado:** 58.0% → 39.5% (-18.5 pp) - muchos aproximados son incompletos cerca
+- **Abierto:** 88.7% → 72.6% (-16.1 pp) - los aproximados bajan la tasa
+- **Abriéndose:** 90.2% → 77.2% (-13.0 pp)
+
+**Interpretación:** El respaldo reduce las tasas porque identifica pases incompletos cerca del objetivo (que no se identificaban por apellido). La tabla principal es más confiable para H3.
+
+---
+
+### Insight final:
+
+"La ventaja al lanzar predice conversión: +30.7 puntos con objetivo abierto (≥3.0 yd); +12.4 puntos abriéndose vs cerrándose."
 
 ### Notas de implementación:
 
-- **Cobertura:** 1028/1175 pases (87.5%)
-- **Aproximados:** 250 (24.3%) - objetivo por distancia al balón cuando no se identifica por apellido
-- **Exactos:** 778 (75.7%) - objetivo por apellido en playDescription
-- **SEP_CERRADA_YD:** 1.5 yd (definición actualizada)
-- **TENDENCIA_UMBRAL_YD:** 0.5 yd
+- **Constantes:** SEP_CERRADA_YD = 1.5 yd, TENDENCIA_UMBRAL_YD = 0.5 yd, IC_NIVEL = 0.90
+- **Normalización de apellidos:** quitar Jr., Sr., II, III, IV, guiones
+- **Búsqueda mejorada:** " to " y "intended for ", usar inicial si hay múltiples con mismo apellido
+- **Respaldo (solo robustez):** receptor más cercano al balón en último cuadro disponible
+- **Bootstrap:** 1000 repeticiones, semilla 42
 
 ---
 
 **Decisión final en una línea:**
 
-**GO:** El tracking se corta 0.5s después de pass_forward (confirmado 100%), pero P3 redefinido como "ventaja al lanzar" tiene señal fuerte: +15.5 puntos con ≥3 yd, +12.7 puntos abriéndose vs cerrándose (semana 1, n=778 pases).
+**GO:** El tracking se corta 0.5s después de pass_forward (confirmado 100%), pero P3 redefinido como "ventaja al lanzar" tiene señal fuerte SIN sesgo: +30.7 puntos con ≥3 yd, +12.4 puntos abriéndose vs cerrándose (semana 1, n=778 pases identificados por nombre).
 

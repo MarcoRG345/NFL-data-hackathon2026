@@ -20,29 +20,38 @@ Pendiente
   - Ventana corregida: dir(t+0.25s) - dir(t-0.25s)
   - % brusco: 6.9% (coherente con prueba de vida: 4.3%)
 
-✓ **Tareas 5 y 6:** Ventaja al lanzar (vuelo) - COMPLETO
+✓ **Tareas 5 y 6:** Ventaja al lanzar (vuelo) - COMPLETO Y CORREGIDO
   - **Archivos creados:**
     - `backend/calculos/vuelo.py` - Módulo de ventaja al lanzar (constantes inline)
     - `backend/calculos/__init__.py` - Inicializador
-    - `scratch/prueba_vuelo_modulo.py` - Pruebas del módulo
+    - `scratch/prueba_vuelo_modulo.py` - Pruebas del módulo con tablas principal y robustez
   
   - **Funciones implementadas:**
-    - `vuelo.construir()` - Tabla de ventaja por jugada con respaldo
+    - `vuelo.construir(usar_respaldo=False)` - Tabla de ventaja por jugada
     - `vuelo.sigue_libre_por_jugada()` - **REAL** - Para síntesis de A
-    - `vuelo.resumen()` - Resumen con IC por bootstrap
+    - `vuelo.resumen(ventaja_df, ventaja_robustez_df)` - Resumen con IC 90% por bootstrap
   
-  - **H3 confirmado:**
-    - Abierto vs Cerrado: +32.7 puntos (IC no se solapan)
-    - Abriéndose vs Cerrándose: +21.0 puntos (IC no se solapan)
+  - **Corrección aplicada (identificación de objetivo):**
+    - Búsqueda mejorada: " to " (pases) o "intended for " (intercepciones)
+    - Normalización: quitar Jr., Sr., II, III, IV, guiones
+    - Usar inicial si hay dos receptores con mismo apellido
+    - Sin objetivo (spike, throwaway): valido=false, fuera de H3
+    - Respaldo SOLO en tabla de robustez (no en principal)
   
-  - **Cobertura:** 1028/1175 pases (87.5%)
-    - Exactos: 778 (75.7%) - objetivo por apellido en playDescription
-    - Aproximados: 250 (24.3%) - objetivo por distancia al balón (respaldo)
+  - **H3 confirmado (tabla principal, n=778 por nombre):**
+    - Abierto (≥3 yd) vs Cerrado (<1.5 yd): 88.7% - 58.0% = **+30.7 puntos** (IC 90% no se solapan)
+    - Abriéndose vs Cerrándose: 90.2% - 77.8% = **+12.4 puntos** (IC 90% no se solapan)
+  
+  - **Cobertura (semana 1, 1051 pases totales):**
+    - Por nombre: 778 (74.0%) - **tabla principal**
+    - Sin objetivo: 50 (4.8%) - spike, throwaway (valido=false)
+    - Aproximados: 223 (21.2%) - **solo tabla de robustez**
   
   - **Constantes:**
     - ABIERTO_YD = 3.0
     - SEP_CERRADA_YD = 1.5 (actualizado)
     - TENDENCIA_UMBRAL_YD = 0.5
+    - IC_NIVEL = 0.90 (90%, no 95%)
     - BOOTSTRAP_REPS = 1000, SEMILLA = 42
 
 ### Avisos para A:
@@ -52,7 +61,7 @@ Pendiente
   - Firma: `sigue_libre_por_jugada(cuadros, plays, players, pff)`
   - Retorna: DataFrame con gameId, playId, valido, sigue_libre
   - Significado: sigue_libre = objetivo a ≥3 yd en pass_forward
-  - Cobertura semana 1: 1028 jugadas (87.5% del total de pases)
+  - Cobertura semana 1: 778 jugadas (74.0% del total de pases)
 
 ### Pendiente:
 
