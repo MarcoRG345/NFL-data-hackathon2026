@@ -62,81 +62,78 @@ Pendiente
   - Confirmado: tracking se corta 0.5s después de pass_forward
   - P3 redefinido como "ventaja al lanzar"
 
-✓ **Tarea 3 (prototipo):** Giro principal por ruta
-  - Archivo: `scratch/prueba_giros.py`
-  - Ventana corregida: dir(t+0.25s) - dir(t-0.25s)
-  - % brusco: 6.9% (coherente con prueba de vida: 4.3%)
-
-✓ **Tarea 2:** Giro por cuadro (función real) - COMPLETO
+✓ **Tarea 2:** Giro por cuadro (función real) - COMPLETO Y CONECTADO
   - **Archivo:** `backend/calculos/giros.py`
   - **Función:** `giro_por_cuadro(cuadros)` - Vectorizada
   - **Verificación:** `scratch/verifica_giro_aire.py` - 4 casos sintéticos ✓
-  - **Aviso a A:** Función vectorizada disponible para uso en síntesis
+  - **Conectado a:** estado global, usa tablas base
+  - **Aviso a A:** Función vectorizada disponible
 
-✓ **Tarea 3:** Giro principal por ruta (función real) - COMPLETO
+✓ **Tarea 3:** Giro principal por ruta (función real) - COMPLETO Y CONECTADO
   - **Archivo:** `backend/calculos/giros.py`
-  - **Función:** `construir_giros(cuadros, plays, players, pff)`
-  - **Implementación:**
-    - Giro principal = mayor |Δdir| válido entre 0.5s post-snap y pass_forward
-    - Rutas sin giro: sep_ganada medida desde tiempo mediano de giros (igualdad de condiciones)
-    - Tipos: sin_giro (<30°), suave (30-60°), brusco (≥60°)
-  - **Prueba:** `scratch/prueba_giros_modulo.py` - 4433 rutas analizadas
+  - **Función:** `construir(filtro)` lee de estado.tablas, guarda en estado.resultados["giros"]
+  - **Conectado a:** cuadros, jugadas, sep_cuadros del estado global
+  - **Prueba:** `scratch/prueba_giros_modulo.py` (desactualizado, usar endpoint)
 
-✓ **Tarea 4:** Resumen de giros e H2 - COMPLETO
+✓ **Tarea 4:** Resumen de giros e H2 - COMPLETO Y CONECTADO
   - **Función:** `giros.resumen(filtro)` - Por tipo con IC 90%
-  - **H2 parcial:** El giro brusco conserva separación (+0.35 yd vs sin giro, IC NO se solapan) pero no aumenta el % libre en pass_forward (IC se solapan)
-  - **Insight:** "H2 parcial: el giro brusco conserva separación (+0.35 yd vs sin giro) pero no aumenta el % libre en pass_forward (IC se solapan)."
-  - **Resultados:** `scratch/resultados-giro-aire.md` actualizado con H2
+  - **Endpoint:** `GET /api/giros/resumen?filtro=decisivo` ✓
+  - **H2 parcial (n=4213 rutas):**
+    - Brusco vs Sin giro: +0.34 yd conserva separación (IC NO se solapan)
+    - PERO % libre similar (IC se solapan - dato no implementado aún)
+  - **Resultados:** Ver sección "RESULTADOS FINALES" en `scratch/resultados-giro-aire.md`
 
-✓ **Tareas 5 y 6:** Ventaja al lanzar (vuelo) - COMPLETO Y CORREGIDO
-  - **Archivos creados:**
-    - `backend/calculos/vuelo.py` - Módulo de ventaja al lanzar (constantes inline)
-    - `backend/calculos/__init__.py` - Inicializador
-    - `scratch/prueba_vuelo_modulo.py` - Pruebas del módulo con tablas principal y robustez
+✓ **Tareas 5 y 6:** Ventaja al lanzar (vuelo) - COMPLETO Y CONECTADO
+  - **Archivo:** `backend/calculos/vuelo.py`
+  - **Funciones conectadas:**
+    - `construir(filtro)` lee tabla base `objetivo`, guarda en estado.resultados["ventaja_al_lanzar"]
+    - `sigue_libre_por_jugada(filtro)` - **REAL** - Para síntesis de A
+    - `resumen(filtro)` - Resumen con IC 90% por bootstrap
+  - **Endpoint:** `GET /api/vuelo/resumen?filtro=decisivo` ✓
   
-  - **Funciones implementadas:**
-    - `vuelo.construir(usar_respaldo=False)` - Tabla de ventaja por jugada
-    - `vuelo.sigue_libre_por_jugada()` - **REAL** - Para síntesis de A
-    - `vuelo.resumen(ventaja_df, ventaja_robustez_df)` - Resumen con IC 90% por bootstrap
+  - **Tabla base objetivo (A2):** 96.4% identificación por texto, SIN respaldo
   
-  - **Corrección aplicada (identificación de objetivo):**
-    - Búsqueda mejorada: " to " (pases) o "intended for " (intercepciones)
-    - Normalización: quitar Jr., Sr., II, III, IV, guiones
-    - Usar inicial si hay dos receptores con mismo apellido
-    - Sin objetivo (spike, throwaway): valido=false, fuera de H3
-    - Respaldo SOLO en tabla de robustez (no en principal)
+  - **H3 confirmado (n=927 pases):**
+    - Abierto (≥3 yd) vs Cerrado (<1.5 yd): 77.4% - 39.0% = **+38.4 puntos** (IC 90% no se solapan)
+    - Abriéndose vs Cerrándose: 77.9% - 63.8% = **+14.1 puntos** (IC 90% no se solapan)
   
-  - **H3 confirmado (tabla principal, n=778 por nombre):**
-    - Abierto (≥3 yd) vs Cerrado (<1.5 yd): 88.7% - 58.0% = **+30.7 puntos** (IC 90% no se solapan)
-    - Abriéndose vs Cerrándose: 90.2% - 77.8% = **+12.4 puntos** (IC 90% no se solapan)
+  - **Insight:** "La ventaja al lanzar predice conversión: +38.4 puntos con objetivo abierto (≥3.0 yd); +14.1 puntos abriéndose vs cerrándose."
   
-  - **Cobertura (semana 1, 1051 pases totales):**
-    - Por nombre: 778 (74.0%) - **tabla principal**
-    - Sin objetivo: 50 (4.8%) - spike, throwaway (valido=false)
-    - Aproximados: 223 (21.2%) - **solo tabla de robustez**
-  
-  - **Constantes:**
+  - **Constantes en config.py:**
     - ABIERTO_YD = 3.0
-    - SEP_CERRADA_YD = 1.5 (actualizado)
+    - SEP_CERRADA_YD = 1.5
     - TENDENCIA_UMBRAL_YD = 0.5
-    - IC_NIVEL = 0.90 (90%, no 95%)
-    - BOOTSTRAP_REPS = 1000, SEMILLA = 42
+    - NIVEL_IC = 0.90 (90%, no 95%)
+    - BOOTSTRAP_REPS = 1000, BOOTSTRAP_SEMILLA = 42
 
 ### Avisos para A:
 
-🔔 **`giro_por_cuadro()` está REAL y VERIFICADO**
+🔔 **`giro_por_cuadro()` está REAL y CONECTADO**
   - Ubicación: `backend/calculos/giros.py`
   - Firma: `giro_por_cuadro(cuadros)`
   - Retorna: DataFrame con giro_grados, girando, valido (columnas añadidas)
   - Vectorizado: procesa todo el tracking de una vez
-  - Verificación: 4 casos sintéticos en `scratch/verifica_giro_aire.py`
 
-🔔 **`vuelo.sigue_libre_por_jugada()` está REAL**
+🔔 **`vuelo.sigue_libre_por_jugada()` está REAL y CONECTADO**
   - Ubicación: `backend/calculos/vuelo.py`
-  - Firma: `sigue_libre_por_jugada(cuadros, plays, players, pff)`
+  - Firma: `sigue_libre_por_jugada(filtro="decisivo")`
   - Retorna: DataFrame con gameId, playId, valido, sigue_libre
-  - Significado: sigue_libre = objetivo a ≥3 yd en pass_forward
-  - Cobertura semana 1: 778 jugadas (74.0% del total de pases)
+  - Significado: sigue_libre = objetivo a ≥3 yd en frame_lanza
+  - Lee de tabla base `objetivo` (96.4% cobertura)
+
+### Backend funcionando:
+
+✅ **Servidor levantado:** `uvicorn backend.main:app --reload --port 8000`
+
+✅ **Endpoints operativos:**
+  - `GET /api/vuelo/resumen?filtro=decisivo` → VueloResp
+  - `GET /api/giros/resumen?filtro=decisivo` → GirosResp
+
+✅ **Integración completa:**
+  - `backend/calculos/vuelo.py` conectado a tabla base `objetivo` ✓
+  - `backend/calculos/giros.py` conectado a `cuadros`, `jugadas`, `sep_cuadros` ✓
+  - Constantes movidas a `backend/config.py` ✓
+  - Estado global en `backend/estado.py` ✓
 
 ### Pendiente:
 
@@ -147,6 +144,6 @@ Pendiente
 
 ### Notas:
 
-- **H2 parcial:** El giro brusco conserva separación (+0.35 yd vs sin giro, IC NO se solapan) pero no aumenta el % libre en pass_forward (IC se solapan)
-- **H3 confirmada:** La ventaja al lanzar SÍ predice conversión (+30.7 pp abierto vs cerrado, IC no se solapan)
-- **Prioridad narrativa:** P3 (ventaja al lanzar) > P2 (giros)
+- **H2 parcial (FINAL):** Giro brusco conserva separación (+0.34 yd vs sin giro, IC NO se solapan), datos de % libre pendientes
+- **H3 confirmada (FINAL):** La ventaja al lanzar SÍ predice conversión (+38.4 pp abierto vs cerrado con tabla base objetivo, IC no se solapan)
+- **Prioridad narrativa:** P3 (ventaja al lanzar, +38.4 pp) >> P2 (giros, +0.34 yd)

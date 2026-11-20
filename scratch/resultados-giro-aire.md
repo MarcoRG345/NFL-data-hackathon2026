@@ -535,3 +535,55 @@ Los IC 90% de % libre SÍ se solapan, indicando que NO hay diferencias estadíst
 - **Constantes:** VEL_MIN_GIRO = 2.0, GIRO_SUAVE = 30, GIRO_BRUSCO = 60, IC_NIVEL = 0.90
 - **Verificación:** `scratch/verifica_giro_aire.py` - 4 casos sintéticos pasan ✓
 
+
+---
+
+## RESULTADOS FINALES CON TABLAS BASE (INTEGRACIÓN CON MAIN)
+
+### H3: VENTAJA AL LANZAR PREDICE CONVERSIÓN (n=927)
+
+**Tabla base objetivo de A2:** 96.4% identificación por texto, sin respaldo
+
+**Por separación:**
+- Cerrado (<1.5 yd): **39.0%** (n=164, IC 90%: [32.9, 45.1])
+- Disputado (1.5-3 yd): **64.9%** (n=228, IC 90%: [59.6, 70.2])
+- Abierto (≥3 yd): **77.4%** (n=535, IC 90%: [74.2, 80.2])
+
+**Por tendencia:**
+- Abriéndose: **77.9%** (n=267, IC 90%: [73.4, 82.0])
+- Estable: **62.9%** (n=367, IC 90%: [58.6, 67.0])
+- Cerrándose: **63.8%** (n=293, IC 90%: [59.0, 68.6])
+
+**H3 confirmado:**
+- Abierto vs Cerrado: 77.4% - 39.0% = **+38.4 puntos** ✓ (IC no se solapan)
+- Abriéndose vs Cerrándose: 77.9% - 63.8% = **+14.1 puntos** ✓ (IC no se solapan)
+
+**Insight:** "La ventaja al lanzar predice conversión: +38.4 puntos con objetivo abierto (≥3.0 yd); +14.1 puntos abriéndose vs cerrándose."
+
+---
+
+### H2: GIROS (n=4213 rutas)
+
+**Por tipo (franja media):**
+- Sin giro: sep_ganada **-0.32 yd** (n=2709, IC 90%: [-0.35, -0.28])
+- Suave: sep_ganada **-0.24 yd** (n=1220, IC 90%: [-0.28, -0.19])
+- Brusco: sep_ganada **+0.02 yd** (n=284, IC 90%: [-0.08, 0.12])
+
+**H2 parcial:**
+- Brusco vs Sin giro: +0.02 - (-0.32) = **+0.34 yd** (IC no se solapan en sep_ganada)
+- PERO los IC del % libre sí se solapan (dato no mostrado en este resumen)
+
+**Insight:** "H2 parcial: el giro brusco conserva separación (+0.3 yd vs sin giro) pero no aumenta el % libre en pass_forward (IC se solapan)."
+
+---
+
+### Endpoints funcionando:
+
+- GET /api/vuelo/resumen?filtro=decisivo ✓
+- GET /api/giros/resumen?filtro=decisivo ✓
+
+### Módulos conectados:
+
+- ackend/calculos/vuelo.py → tabla base objetivo ✓
+- ackend/calculos/giros.py → tablas base cuadros, jugadas, sep_cuadros ✓
+
